@@ -1,0 +1,25 @@
+{
+  "clean_accuracy": 0.8997829232995659,
+  "epsilon_sweep": [
+    {
+      "epsilon": 0.1,
+      "adversarial_accuracy": 0.7297395079594791,
+      "attack_success_rate": 0.1889827100924809
+    },
+    {
+      "epsilon": 0.3,
+      "adversarial_accuracy": 0.2467438494934877,
+      "attack_success_rate": 0.725774024929634
+    },
+    {
+      "epsilon": 0.5,
+      "adversarial_accuracy": 0.020260492040520984,
+      "attack_success_rate": 0.9774829111379172
+    },
+    {
+      "epsilon": 1.0,
+      "adversarial_accuracy": 0.0,
+      "attack_success_rate": 1.0
+    }
+  ]
+}

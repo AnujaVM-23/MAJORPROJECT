@@ -5,6 +5,8 @@ from feature_extraction.feature_extractor import extract_url_features
 app = Flask(__name__)
 import joblib
 import numpy as np
+import json
+import os
 
 # Load the data from the pkl file
 try:
@@ -13,6 +15,28 @@ try:
 except FileNotFoundError:
     data = None
 cors = CORS(app)
+
+
+def load_adversarial_metrics():
+    metrics_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "adversarial",
+        "artifacts",
+        "final_summary.json",
+    )
+
+    with open(metrics_path, "r", encoding="utf-8") as metrics_file:
+        summary = json.load(metrics_file)
+
+    baseline_clean = summary["baseline_clean"]["accuracy"]
+    baseline_attacked = summary["baseline_under_pgd_eps0.3"]["accuracy"]
+    defended_attacked = summary["adv_trained_under_pgd_eps0.3"]["accuracy"]
+
+    return {
+        "base_model_accuracy": baseline_clean * 100,
+        "after_attack_accuracy": baseline_attacked * 100,
+        "defence_accuracy": defended_attacked * 100,
+    }
 
 @app.route('/predict', methods=['POST'])
 def process_url():
@@ -45,6 +69,24 @@ def process_url():
     }
     
     return jsonify(processed_result)
+
+
+@app.route('/metrics', methods=['GET'])
+def get_metrics():
+    try:
+        return jsonify(load_adversarial_metrics())
+    except FileNotFoundError:
+        return jsonify({
+            "message": "Metrics file not found. Run adversarial training scripts to generate final_summary.json."
+        }), 404
+    except KeyError as err:
+        return jsonify({
+            "message": f"Metrics file is missing expected key: {err}"
+        }), 500
+    except json.JSONDecodeError:
+        return jsonify({
+            "message": "Metrics file is invalid JSON."
+        }), 500
 
 
 if __name__ == '__main__':

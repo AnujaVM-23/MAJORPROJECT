@@ -295,4 +295,137 @@ body {
   .redShadow {
     text-shadow: 0 0 5px #FF3131, 0 0 10px #FF3131, 0 0 15px #FF3131, 0 0 20px #FF3131;
   }
+
+  .metricsPanel {
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .metricsTitle {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+  }
+
+  .metricsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.8rem;
+  }
+
+  .metricCard {
+    padding: 0.8rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.07);
+    text-align: center;
+  }
+
+  .metricLabel {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #cfd8dc;
+  }
+
+  .metricValue {
+    margin: 0.2rem 0 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #33ff8c;
+  }
+
+  .metricsError {
+    margin: 0.8rem 0 0;
+    text-align: center;
+    color: #ff9898;
+  }
+
+  @media (max-width: 768px) {
+    .metricsGrid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .metricsLoading {
+    text-align: center;
+    color: #d0d0d0;
+    margin: 0.2rem 0 0;
+  }
+
+  .dashboardShell {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .dashboardSubtitle {
+    text-align: center;
+    margin-top: 0.6rem;
+    color: #c6d0d8;
+  }
+
+  .dashboardMeta {
+    margin-top: 0.8rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    padding-top: 0.8rem;
+    display: grid;
+    gap: 0.25rem;
+    color: #d7e0e8;
+    font-size: 0.9rem;
+  }
+
+  .dashboardMeta span {
+    color: #a9bbcc;
+  }
+
+  .predictPanel {
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .predictTitle {
+    text-align: center;
+    font-size: 1.2rem;
+    margin: 0 0 1rem;
+    font-weight: 600;
+  }
+
+  .resultPanel {
+    margin-top: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.8rem;
+    padding: 0.8rem;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .resultPanelActive {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .resultHeading {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #cfd8dc;
+  }
+
+  .resultText {
+    margin: 0.5rem 0 0;
+    font-size: 1.3rem;
+    white-space: pre-line;
+  }
+
+  .resultMeta {
+    margin: 0.5rem 0 0;
+    color: #a7c2d7;
+    font-size: 0.9rem;
+  }
+
+  .resultPlaceholder {
+    color: #b0bec5;
+    text-shadow: none;
+  }
   

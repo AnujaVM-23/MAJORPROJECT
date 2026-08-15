@@ -1,0 +1,48 @@
+{
+  "clean_accuracy": 0.9323444283646889,
+  "epsilon_sweep": [
+    {
+      "epsilon": 0.1,
+      "adversarial_accuracy": 0.8317655571635311,
+      "attack_success_rate": 0.10787737679472255
+    },
+    {
+      "epsilon": 0.3,
+      "adversarial_accuracy": 0.48986975397973953,
+      "attack_success_rate": 0.47458284827318586
+    },
+    {
+      "epsilon": 0.5,
+      "adversarial_accuracy": 0.18451519536903038,
+      "attack_success_rate": 0.8020954598370198
+    },
+    {
+      "epsilon": 1.0,
+      "adversarial_accuracy": 0.003979739507959479,
+      "attack_success_rate": 0.9957314707023671
+    }
+  ],
+  "example_flips": [
+    {
+      "true_label": 0,
+      "confidence_before": 0.3988008672468393,
+      "confidence_after": 0.9796189105044399,
+      "pred_before": 0,
+      "pred_after": 1
+    },
+    {
+      "true_label": 0,
+      "confidence_before": 0.06406311072521989,
+      "confidence_after": 0.8322056971172374,
+      "pred_before": 0,
+      "pred_after": 1
+    },
+    {
+      "true_label": 1,
+      "confidence_before": 0.9925108347505406,
+      "confidence_after": 0.6465161636667905,
+      "pred_before": 1,
+      "pred_after": 1
+    }
+  ]
+}

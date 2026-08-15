@@ -628,7 +628,19 @@ If the DNS record is empty or not found then, the value assigned to this feature
 
 import dns.resolver
 
-def check_dns(domain):
+def check_dns(url):
+    # FIX: this function used to receive the full URL (e.g. "https://www.google.com")
+    # and pass it straight to dns.resolver.resolve(), which only accepts a bare
+    # hostname. That made every lookup fail and return -1 ("phishing") for
+    # virtually any URL, including legitimate ones. Extract the hostname first.
+    try:
+        subDomain, base_domain, suffix = extract(url)
+        domain = ".".join(part for part in [subDomain, base_domain, suffix] if part)
+        if not domain:
+            domain = urlparse(url).netloc or url
+    except Exception:
+        domain = urlparse(url).netloc or url
+
     # List of common DNSBL services
     dnsbl_services = [
         "zen.spamhaus.org",
@@ -695,11 +707,18 @@ def web_traffic(url):
         else:
             return -1
     except (urllib.error.URLError, urllib.error.HTTPError) as e:
+        # FIX: data.alexa.com (Amazon's Alexa Rank API) was permanently shut
+        # down in 2022, so this call now fails for every single URL. The
+        # original fallback of "return 1" meant this feature silently voted
+        # "phishing" on 100% of live lookups, including well-known legitimate
+        # sites. Returning 0 ("unknown/suspicious", a value the training data
+        # itself contains) is honest about the fact that no live signal is
+        # available, rather than actively voting the wrong way every time.
         print(f"Unable to fetch web traffic for URL: {url}. Error: {e}")
-        return 1
+        return 0
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        return 1
+        return 0
 
 # Feature 27
 def page_rank(url):

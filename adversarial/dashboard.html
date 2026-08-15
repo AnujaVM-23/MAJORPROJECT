@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PhishGuard — Logistic Regression under PGD Attack</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #171a24;
+    --border: #262b3a;
+    --text: #e8eaf0;
+    --muted: #8b91a5;
+    --blue: #5b8def;
+    --orange: #f2994a;
+    --green: #4ade80;
+    --red: #f26b6b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 32px 24px 80px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 40px; }
+  header h1 { font-size: 28px; margin-bottom: 6px; }
+  header p { color: var(--muted); font-size: 15px; margin: 0; }
+  .section { margin-bottom: 48px; }
+  .section h2 {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .section .step-num {
+    background: var(--blue);
+    color: #0f1117;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .section .desc { color: var(--muted); font-size: 14px; margin: 4px 0 18px 36px; max-width: 720px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-left: 36px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .card .label { color: var(--muted); font-size: 12.5px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .card .value { font-size: 26px; font-weight: 700; }
+  .card .value.blue { color: var(--blue); }
+  .card .value.orange { color: var(--orange); }
+  .card .value.red { color: var(--red); }
+  .card .value.green { color: var(--green); }
+  table {
+    width: calc(100% - 36px);
+    margin-left: 36px;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  th, td { padding: 10px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.03em; }
+  tr:last-child td { border-bottom: none; }
+  .chart-box { margin-left: 36px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+  .callout {
+    margin: 18px 36px 0;
+    background: rgba(242,107,107,0.08);
+    border: 1px solid rgba(242,107,107,0.35);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .callout b { color: var(--red); }
+  .callout.good { background: rgba(74,222,128,0.08); border-color: rgba(74,222,128,0.35); }
+  .callout.good b { color: var(--green); }
+  footer { text-align: center; color: var(--muted); font-size: 12.5px; margin-top: 60px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Logistic Regression under PGD Attack</h1>
+    <p>PhishGuard AI — Adversarial Machine Learning on Phishing URL Detection</p>
+  </header>
+
+  <div class="section">
+    <h2><span class="step-num">1</span> Baseline Model</h2>
+    <p class="desc">Logistic Regression trained on 11,055 samples, 30 URL/website features.</p>
+    <div class="cards">
+      <div class="card"><div class="label">Accuracy</div><div class="value blue">93.23%</div></div>
+      <div class="card"><div class="label">Precision</div><div class="value blue">93.17%</div></div>
+      <div class="card"><div class="label">Recall</div><div class="value blue">94.80%</div></div>
+      <div class="card"><div class="label">F1 Score</div><div class="value blue">93.98%</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2><span class="step-num">2</span> PGD Attack on the Baseline</h2>
+    <p class="desc">Projected Gradient Descent (L∞, 40 iterations) crafted directly from the model's own gradients.</p>
+    <div class="chart-box"><canvas id="pgdChart" height="90"></canvas></div>
+    <table style="margin-top:14px">
+      <tr><th>Epsilon</th><th>Adversarial Accuracy</th><th>Attack Success Rate</th></tr>
+      <tr><td>0.1</td><td>83.18%</td><td>10.79%</td></tr>
+      <tr><td>0.3</td><td>48.99%</td><td>47.46%</td></tr>
+      <tr><td>0.5</td><td>18.45%</td><td>80.21%</td></tr>
+      <tr><td>1.0</td><td>0.40%</td><td>99.57%</td></tr>
+    </table>
+    <div class="callout">
+      <b>Finding:</b> at a moderate perturbation budget (ε=0.3), accuracy collapses from 93.23% to 48.99% —
+      nearly half of correctly-classified URLs get flipped to the wrong label.
+    </div>
+  </div>
+
+  <div class="section">
+    <h2><span class="step-num">3</span> Defense: Adversarial Training</h2>
+    <p class="desc">Retrained Logistic Regression on clean + PGD-generated adversarial examples.</p>
+    <table>
+      <tr><th>Model</th><th>Clean Accuracy</th><th>Accuracy under PGD (ε=0.3)</th></tr>
+      <tr><td>Baseline (undefended)</td><td>93.23%</td><td>48.99%</td></tr>
+      <tr><td>Adversarially trained</td><td>89.98%</td><td style="color:var(--green); font-weight:700;">94.97% *</td></tr>
+    </table>
+    <div class="callout good">
+      <b>Looks like a win... but it's misleading.</b> That 94.97% was measured against a <i>static</i> attack —
+      PGD examples crafted for the old (undefended) model, not the new one. That's not how a real attacker
+      would behave.
+    </div>
+  </div>
+
+  <div class="section">
+    <h2><span class="step-num">4</span> The Real Test: Adaptive Attack</h2>
+    <p class="desc">Re-attacking the <i>defended</i> model using its own gradients — what an attacker with model access would actually do.</p>
+    <div class="chart-box"><canvas id="adaptiveChart" height="90"></canvas></div>
+    <table style="margin-top:14px">
+      <tr><th>Epsilon</th><th>Adversarial Accuracy</th><th>Attack Success Rate</th></tr>
+      <tr><td>0.1</td><td>72.97%</td><td>18.90%</td></tr>
+      <tr><td>0.3</td><td style="color:var(--red); font-weight:700;">24.67%</td><td>72.58%</td></tr>
+      <tr><td>0.5</td><td>2.03%</td><td>97.75%</td></tr>
+      <tr><td>1.0</td><td>0.00%</td><td>100.00%</td></tr>
+    </table>
+    <div class="callout">
+      <b>The defense fails under adaptive attack.</b> 24.67% accuracy at ε=0.3 — worse than the
+      undefended baseline's 48.99% at the same epsilon. The earlier "94.97%" was an artifact of testing
+      against a stale attack, not real robustness.
+    </div>
+  </div>
+
+  <div class="section">
+    <h2><span class="step-num">5</span> Iterative Adversarial Training (5 Rounds)</h2>
+    <p class="desc">Regenerating adversarial examples against the current model each round — the standard (Madry-style) approach — to see if repeated training converges to real robustness.</p>
+    <div class="chart-box"><canvas id="iterChart" height="80"></canvas></div>
+    <div class="callout">
+      <b>Training oscillates, never converges.</b> Accuracy under adaptive attack bounces between
+      13.93% and 24.67% across 5 rounds — the model keeps re-fitting to whichever adversarial batch
+      it last saw, without ever settling on a robust boundary.
+    </div>
+  </div>
+
+  <div class="section">
+    <h2><span class="step-num">6</span> Conclusion</h2>
+    <p class="desc" style="margin-bottom:0">
+      Logistic Regression has a single linear decision boundary with a fixed margin. PGD only needs to
+      push a point across that one boundary, and adversarial training can only shift/rotate that same
+      hyperplane — it has no non-linear capacity to locally reshape the decision surface the way an MLP
+      or tree ensemble could. This is a genuine, evaluation-honest negative result: naive adversarial
+      training gives a false sense of security unless tested with adaptive attacks, and linear models
+      have a fundamentally low ceiling for adversarial robustness under L∞ perturbations.
+    </p>
+  </div>
+
+  <footer>PhishGuard AI — Adversarial ML major project · Logistic Regression · PGD · Adversarial Training</footer>
+</div>
+
+<script>
+const commonOpts = (yLabel) => ({
+  responsive: true,
+  plugins: { legend: { labels: { color: '#e8eaf0' } } },
+  scales: {
+    x: { ticks: { color: '#8b91a5' }, grid: { color: '#262b3a' }, title: { display: true, text: 'PGD epsilon', color: '#8b91a5' } },
+    y: { ticks: { color: '#8b91a5' }, grid: { color: '#262b3a' }, title: { display: true, text: yLabel, color: '#8b91a5' }, min: 0, max: 100 }
+  }
+});
+
+new Chart(document.getElementById('pgdChart'), {
+  type: 'line',
+  data: {
+    labels: ['0.1', '0.3', '0.5', '1.0'],
+    datasets: [
+      { label: 'Adversarial accuracy (%)', data: [83.18, 48.99, 18.45, 0.40], borderColor: '#5b8def', backgroundColor: '#5b8def', tension: 0.25 },
+      { label: 'Clean accuracy (ref.)', data: [93.23, 93.23, 93.23, 93.23], borderColor: '#8b91a5', borderDash: [6,4], pointRadius: 0 }
+    ]
+  },
+  options: commonOpts('Accuracy (%)')
+});
+
+new Chart(document.getElementById('adaptiveChart'), {
+  type: 'line',
+  data: {
+    labels: ['0.1', '0.3', '0.5', '1.0'],
+    datasets: [
+      { label: 'Baseline under static PGD', data: [83.18, 48.99, 18.45, 0.40], borderColor: '#5b8def', backgroundColor: '#5b8def', tension: 0.25 },
+      { label: 'Defended model under adaptive PGD', data: [72.97, 24.67, 2.03, 0.0], borderColor: '#f26b6b', backgroundColor: '#f26b6b', tension: 0.25 }
+    ]
+  },
+  options: commonOpts('Accuracy (%)')
+});
+
+new Chart(document.getElementById('iterChart'), {
+  type: 'line',
+  data: {
+    labels: ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5'],
+    datasets: [
+      { label: 'Clean accuracy (%)', data: [89.98, 90.99, 89.98, 90.99, 89.98], borderColor: '#4ade80', backgroundColor: '#4ade80', tension: 0.2 },
+      { label: 'Adaptive-PGD accuracy (%), ε=0.3', data: [24.67, 13.93, 24.67, 13.93, 24.67], borderColor: '#f26b6b', backgroundColor: '#f26b6b', tension: 0.2 }
+    ]
+  },
+  options: commonOpts('Accuracy (%)')
+});
+</script>
+</body>
+</html>
